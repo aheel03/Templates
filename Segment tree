@@ -1,0 +1,100 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef long long int            ll;
+typedef unsigned long long int   ull;
+typedef vector<pair<ll,ll>>      vpll;
+typedef vector<ll>               vll;
+typedef map<ll,ll>               mll;
+typedef pair<ll,ll>              pll;
+ 
+#define loop(i,k,n)              for(ll i=k;i<n;i++)
+#define pb                       push_back
+#define ft                       first 
+#define sc                       second
+#define yes                      cout<<"Yes"<<endl
+#define no                       cout<<"No"<<endl
+#define Yes                      cout<<"YES"<<endl
+#define No                       cout<<"NO"<<endl
+#define Alice                    cout<<"Alice"<<endl
+#define Bob                      cout<<"Bob"<<endl
+#define newl                     cout<<"\n"
+#define clean                    fflush(stdout)
+#define FLOOR(x,y)               (ll(floor(double(x)/y)))
+#define CEIL(x,y)                (ll(ceil(double(x)/y)))
+#define max3(a,b,c)              max(a,max(b,c))
+#define min3(a,b,c)              min(a,min(b,c))
+#define all(v)                   v.begin(),v.end()
+#define rall(v)                  v.rbegin(),v.rend()
+#define Max(v)                   *max_element(v.begin(), v.end())
+#define Min(v)                   *min_element(v.begin(), v.end())
+#define SORT(a)                  sort(a,a+(sizeof(a)/sizeof(a[0])))
+#define inparr(arr,n)            ll arr[n]; loop(i,0,n) cin >> arr[i]
+#define inpvec(v,n)              vll v(n); for(auto &i:v) cin >> i
+#define prec(ans,n)              cout<< fixed << setprecision(n) << ans << endl
+const ll M=998244353;
+const ll N=2e5+5;
+const ll INF=1e15;
+
+ll segtree[N*4];
+ll a[N];
+
+
+void build_segtree(ll node, ll lo, ll hi){
+    if(lo==hi){
+        segtree[node]=a[lo];
+        return;
+    }
+    ll mid=(lo+hi)/2;
+    build_segtree(node*2,lo,mid);
+    build_segtree((node*2)+1,mid+1,hi);
+    segtree[node]=segtree[node*2]+segtree[(node*2)+1];
+}
+
+ll query(ll node, ll lo, ll hi, ll l, ll r){
+    if(r<lo || l>hi){
+        return 0;
+    }
+    if(l<=lo && r>=hi){
+        return segtree[node];
+    }
+    ll mid=(lo+hi)/2;
+    ll left=query(node*2,lo,mid,l,r);
+    ll right=query((node*2)+1,mid+1,hi,l,r);
+    return left+right;
+}
+
+void update(ll node, ll lo, ll hi, ll pos, ll u){
+    if(lo==hi){
+        segtree[node]=u;
+        return;
+    }
+    ll mid=(lo+hi)/2;
+    if(pos<=mid){
+        update(node*2,lo,mid,pos,u);
+    }else{
+        update(node*2+1,mid+1,hi,pos,u);
+    }
+
+    segtree[node]=segtree[node*2]+segtree[node*2+1];
+}
+
+
+int main()
+{
+    ll n,q;
+    cin>>n>>q;
+    loop(i,1,n+1){
+        cin>>a[i];
+    }
+    build_segtree(1,1,n);
+    loop(i,0,q){
+        ll inp,l,r;
+        cin>>inp>>l>>r;
+        if(!(inp&1)){
+            cout<<query(1,1,n,l,r)<<endl;
+        }else{
+            update(1,1,n,l,r);
+        }
+    }
+}
