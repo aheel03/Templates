@@ -39,6 +39,10 @@ const ll INF=1e15;
 ll segtree[N*4];
 ll a[N];
 
+ll func(ll a,ll b){
+    return min(a,b);
+}
+
 
 void build_segtree(ll node, ll lo, ll hi){
     if(lo==hi){
@@ -48,12 +52,12 @@ void build_segtree(ll node, ll lo, ll hi){
     ll mid=(lo+hi)/2;
     build_segtree(node*2,lo,mid);
     build_segtree((node*2)+1,mid+1,hi);
-    segtree[node]=segtree[node*2]+segtree[(node*2)+1];
+    segtree[node]=func(segtree[node*2],segtree[(node*2)+1]);
 }
 
 ll query(ll node, ll lo, ll hi, ll l, ll r){
     if(r<lo || l>hi){
-        return 0;
+        return INF;
     }
     if(l<=lo && r>=hi){
         return segtree[node];
@@ -61,7 +65,7 @@ ll query(ll node, ll lo, ll hi, ll l, ll r){
     ll mid=(lo+hi)/2;
     ll left=query(node*2,lo,mid,l,r);
     ll right=query((node*2)+1,mid+1,hi,l,r);
-    return left+right;
+    return func(left,right);
 }
 
 void update(ll node, ll lo, ll hi, ll pos, ll u){
@@ -76,7 +80,7 @@ void update(ll node, ll lo, ll hi, ll pos, ll u){
         update(node*2+1,mid+1,hi,pos,u);
     }
 
-    segtree[node]=segtree[node*2]+segtree[node*2+1];
+    segtree[node]=func(segtree[node*2],segtree[node*2+1]);
 }
 
 
