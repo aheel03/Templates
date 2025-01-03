@@ -1,0 +1,26 @@
+ll Floor_nth_Root(ll x, ll n){
+    if (x==0 || x==1){
+        return x;
+    }
+    auto power=[](ll a, ll exp){
+        ll res=1;
+        for(ll i=0;i<exp;i++) {
+            res*=a;
+        }
+        return res;
+    };
+    ll v=power(2,63/n);
+    ll lo=0,hi=min<ll>(v,ll(x+1));
+    while (hi-lo>1){
+        ll mid=(lo+hi)>>1;
+        ll count=n;
+        ll val=1;
+        while(count--)val*=mid;
+        if(val<=x){
+            lo=mid;
+        }else{
+            hi=mid;
+        }
+    }
+    return lo;
+}
