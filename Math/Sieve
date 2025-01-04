@@ -1,0 +1,23 @@
+// call SIEVE() and PRIMES() in the int main()
+const ll N=1e6+5;
+
+vector<bool> sieve(N,true);
+vector<ll> primes;
+
+void SIEVE(){
+    sieve[1]=false;
+    for(ll i=2;i*i<N;i++){
+        if(!sieve[i]) continue;
+        for(ll j=i*i;j<N;j+=i){
+            sieve[j]=false;
+        }
+    }
+}
+
+void PRIMES(){
+    loop(i,2,N){
+        if(sieve[i]){
+            primes.pb(i);
+        }
+    }
+}
