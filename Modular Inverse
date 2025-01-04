@@ -1,0 +1,4 @@
+ll inv(ll a, ll m){
+    if(a<=1) return a;
+    return m - ((ll)(m/a)*inv(m%a,m)%m);
+}
