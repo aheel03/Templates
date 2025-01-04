@@ -1,0 +1,27 @@
+// call FACTMOD() in int main()
+vll factmod(N,1ll);
+
+void FACTMOD(){
+    loop(i,2,N){
+        factmod[i]=(factmod[i-1]*i)%M;
+    }
+}
+
+ll binpow(ll a, ll n, ll m){
+    if(n==0) return 1;
+    ll x=binpow(a,n/2,m);
+    if(n&1){
+        return (a*((x*x)%m))%m;
+    }else{
+        return (x*x)%m;
+    }
+}
+
+ll nCr(ll n, ll r){
+    ll nfact=factmod[n];
+    ll rfact=binpow(factmod[r],M-2,M);
+    ll n_rfact=binpow(factmod[n-r],M-2,M);
+    ll ans=(nfact*rfact)%M;
+    ans=(ans*n_rfact)%M;
+    return ans;
+}
