@@ -2,6 +2,7 @@
 // [ 1  2  1 | 6 ]  -> Represents x + 2y + z = 6
 // [ 2  3  1 | 9 ]  -> Represents 2x + 3y + z = 9
 // [ 3  1  2 | 8 ]  -> Represents 3x + y + 2z = 8
+// Time Complexity : O(min(n,m)*n*m)
 
 const double EPS = 1e-9;
 const int INF = 2; 
