@@ -1,3 +1,5 @@
+// Memory Complexity = O(nlogn) == Size of Segment Tree
+// Time Complexity per query = O((logn)^2)
 #include <bits/stdc++.h>
 using namespace std;
 
