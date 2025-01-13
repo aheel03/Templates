@@ -1,0 +1,48 @@
+const ll MAXN=3e4+10;
+multiset<ll> tree[4*MAXN];
+
+void build(ll a[], ll node, ll search_l, ll search_r){
+    // root node = 1
+    // search_l and search_r is 0-indexed
+    // O((logn)^2)
+    if(search_l>=search_r) {
+        tree[node].insert(a[search_l]);
+    }else{ 
+        ll mid=(search_l+search_r)/2;
+        build(a, node*2, search_l, mid);
+        build(a, node*2+1, mid+1, search_r);
+        merge(tree[node*2].begin(), tree[node*2].end(), tree[node*2+1].begin(),
+              tree[node*2+1].end(), inserter(tree[node], tree[node].begin()));
+    }
+}
+
+ll MultisetsValue(multiset<ll>& v, ll k){
+    // Here goes the algorithm for the value you want to extract
+}
+
+ll query(ll node, ll search_l, ll search_r, ll l, ll r, ll val) {
+    // root node = 1
+    // initial search_l = 0, search_r = 0, l= 0 indexed left pointer (inclusive)
+    // l = 0 indexed left pointer (inclusive)
+    // r = 0 indexed right pointer (inclusive)
+    if (l>r) return 0;
+    if (l==search_l && r==search_r) {
+        return MultisetsValue(tree[node],val);
+    }
+    ll mid=(search_l+search_r)/2;
+    return query(node*2,search_l,mid,l,min(r,mid),val) + //based on the relationship of the query response
+           query(node*2+1,mid+1,search_r,max(l,mid+1),r,val);
+}
+
+void update(ll a[],ll node, ll search_l, ll search_r, ll pos, ll new_val){
+    // pos 0 indexed
+    tree[node].erase(tree[node].find(a[pos]));
+    tree[node].insert(new_val);
+    if (search_l!=search_r) {
+        ll mid=(search_l+search_r)/2;
+        if(pos<=mid) update(a,node*2, search_l, mid, pos, new_val);
+        else update(a,node*2+1, mid+1, search_r, pos, new_val);
+    }else{
+        a[pos]=new_val;
+    }
+}
