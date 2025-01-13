@@ -4,7 +4,6 @@ multiset<ll> tree[4*MAXN];
 void build(ll a[], ll node, ll search_l, ll search_r){
     // root node = 1
     // search_l and search_r is 0-indexed
-    // O((logn)^2)
     if(search_l>=search_r) {
         tree[node].insert(a[search_l]);
     }else{ 
