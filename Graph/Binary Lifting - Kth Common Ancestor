@@ -1,0 +1,32 @@
+const ll MAXN=2e5+5;
+const ll LOG=log2(1e6);
+
+vector<ll> par(MAXN,-1);
+vector<ll> depth(MAXN,0);
+vector<vector<ll>> anc(MAXN,vector<ll>(LOG,1));
+
+ll kthanc(ll node, ll k){
+    if(depth[node]<k){
+        return -1;
+    }
+    loop(i,0,LOG){
+        if(k&(1<<i)){
+            node=anc[node][i];
+        }
+    }
+    return node;
+}
+
+void Buildanc(ll maximum_node){
+    par[1]=1;
+    loop(i,0,LOG){
+        loop(node,1,maximum_node+1){
+            if(i==0){
+                anc[node][i]=par[node];
+                continue;
+            }
+            if(node!=1) depth[node]=depth[par[node]]+1;
+            anc[node][i]=anc[anc[node][i-1]][i-1];
+        }
+    }
+}
