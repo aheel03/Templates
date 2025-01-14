@@ -38,6 +38,20 @@ ll kthanc(ll node, ll k){
     return node;
 }
 
+void Buildanc(ll root,ll end_node){
+    par[root]=root;
+    loop(i,0,LOG){
+        loop(node,root,end_node+1){
+            if(i==0){
+                anc[node][i]=par[node];
+                continue;
+            }
+            if(node!=root) depth[node]=depth[par[node]]+1;
+            anc[node][i]=anc[anc[node][i-1]][i-1];
+        }
+    }
+}
+
 
 void solve(){
     ll n,q;
@@ -47,17 +61,7 @@ void solve(){
         cin>>x;
         par[i]=x;
     }
-    par[1]=1;
-    loop(i,0,LOG){
-        loop(node,1,n+1){
-            if(i==0){
-                anc[node][i]=par[node];
-                continue;
-            }
-            if(node!=1) depth[node]=depth[par[node]]+1;
-            anc[node][i]=anc[anc[node][i-1]][i-1];
-        }
-    }
+    Buildanc(1,n);
     while(q--){
         ll x,k;
         cin>>x>>k;
