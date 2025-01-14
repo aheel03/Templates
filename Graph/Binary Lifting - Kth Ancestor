@@ -17,15 +17,15 @@ ll kthanc(ll node, ll k){
     return node;
 }
 
-void Buildanc(ll maximum_node){
-    par[1]=1;
+void Buildanc(ll root,ll end_node){
+    par[root]=root;
     loop(i,0,LOG){
-        loop(node,1,maximum_node+1){
+        loop(node,root,end_node+1){
             if(i==0){
                 anc[node][i]=par[node];
                 continue;
             }
-            if(node!=1) depth[node]=depth[par[node]]+1;
+            if(node!=root) depth[node]=depth[par[node]]+1;
             anc[node][i]=anc[anc[node][i-1]][i-1];
         }
     }
