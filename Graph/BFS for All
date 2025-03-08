@@ -1,0 +1,42 @@
+const ll MAXN=2e5+5;
+vector<ll> graph[MAXN];
+vector<ll> level(MAXN,INF);
+vector<ll> par(MAXN,-1);
+vector<ll> height(MAXN,0);
+vector<ll> subTreeSize(MAXN,0);
+vector<bool> vis(MAXN,false);
+
+
+
+void bfs(ll root) {
+    queue<ll> q;
+    q.push(root);
+    par[root]=-1;
+    level[root]=0;
+    vis[root]=true;
+    
+    vector<ll> order;
+    while(!q.empty()) {
+        ll node=q.front();
+        q.pop();
+        order.push_back(node);
+        subTreeSize[node]=1;
+        
+        for(auto child:graph[node]) {
+            if(!vis[child]) {
+                vis[child]=true;
+                par[child]=node;
+                level[child]=level[node] + 1;
+                q.push(child);
+            }
+        }
+    }
+
+    reverse(order.begin(), order.end());
+    for(ll node:order) {
+        if(par[node]!=-1){
+            height[par[node]] = max(height[par[node]], height[node] + 1);
+            subTreeSize[par[node]] += subTreeSize[node];
+        }
+    }
+}
