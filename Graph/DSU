@@ -1,0 +1,26 @@
+vector<ll> par(N,-1);
+vector<ll> set_size(N,0ll);
+// initialize the DSU with make_set() on all nodes
+
+void make_set(ll node){
+    par[node]=node;
+    set_size[node]=1;
+}
+
+ll find_set(ll node){
+    if(node==par[node]){
+        return node;
+    }
+    return par[node]=find_set(par[node]);
+}
+
+void union_sets(ll a,ll b){
+    a=find_set(a);
+    b=find_set(b);
+
+    if(a!=b){
+        if(set_size[a]<set_size[b]) swap(a,b);
+        par[b]=a;
+        set_size[a]+=set_size[b];
+    }
+}
