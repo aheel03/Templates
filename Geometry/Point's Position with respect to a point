@@ -1,0 +1,7 @@
+typedef complex<long long int>     point;
+#define x real()
+#define y imag()
+
+bool isLeft(point a, point b, point c) {
+    return (b.x - a.x)*(c.y - a.y) - (b.y - a.y)*(c.x - a.x) > 0;
+}
