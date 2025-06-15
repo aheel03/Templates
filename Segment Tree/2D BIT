@@ -1,0 +1,32 @@
+// Grid Indexing: 0-based indexing
+// fenwick_tree_2d<ll> bit2d(n+1,m+1);
+// Supported Operations:
+//     - add(x, y, val)          → A[x][y] += val
+//     - sum(x, y)               → sum of submatrix (0,0) to (x,y)
+//     - get_sum(x1, y1, x2, y2) → sum of submatrix (x1,y1) to (x2,y2), inclusive
+template <class T>
+struct fenwick_tree_2d{
+    vector<vector<T>> x;
+    fenwick_tree_2d(int n, int m) : x(n, vector<T>(m)) { }
+
+    void add(int k1, int k2, T a) { // x[k1][k2] += a
+        for (; k1 < x.size(); k1 |= k1 + 1)
+            for (int k = k2; k < x[k1].size(); k |= k + 1)
+                x[k1][k] += a;
+    }
+
+    T sum(int k1, int k2) { // sum from (0,0) to (k1,k2)
+        T s = 0;
+        for (; k1 >= 0; k1 = (k1 & (k1 + 1)) - 1)
+            for (int k = k2; k >= 0; k = (k & (k + 1)) - 1)
+                s += x[k1][k];
+        return s;
+    }
+
+    T get_sum(int x1, int y1, int x2, int y2) { // sum in rectangle (x1,y1) to (x2,y2)
+        return sum(x2, y2)
+             - (x1 > 0 ? sum(x1 - 1, y2) : 0)
+             - (y1 > 0 ? sum(x2, y1 - 1) : 0)
+             + (x1 > 0 && y1 > 0 ? sum(x1 - 1, y1 - 1) : 0);
+    }
+};
