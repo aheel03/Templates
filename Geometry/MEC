@@ -1,0 +1,41 @@
+// Given n points, return the radius of the minimum enclosing circle
+// Call convex_hull() before this for faster solution
+// Expected O(n)
+double minimum_enclosing_circle_radius(vector<pointdb> &p) {
+    random_shuffle(p.begin(), p.end());
+    int n = p.size();
+    pointdb center = p[0];
+    double radius = 0;
+
+    for (int i = 1; i < n; i++) {
+        if (DIST(center, p[i]) > radius + EPS) {
+            center = p[i];
+            radius = 0;
+            for (int j = 0; j < i; j++) {
+                if (DIST(center, p[j]) > radius + EPS) {
+                    center = (p[i] + p[j]) / 2.0;
+                    radius = DIST(p[i], p[j]) / 2.0;
+                    for (int k = 0; k < j; k++) {
+                        if (DIST(center, p[k]) > radius + EPS) {
+                            // Calculate circumcircle of triangle (p[i], p[j], p[k])
+                            pointdb a = p[i], b = p[j], c = p[k];
+
+                            // Midpoints
+                            pointdb ab = (a + b) / 2.0, ac = (a + c) / 2.0;
+                            // Directions
+                            pointdb d_ab = (b - a) * pointdb(0, 1);
+                            pointdb d_ac = (c - a) * pointdb(0, 1);
+
+                            // Solve intersection
+                            double t = ((ac - ab).x * d_ac.y - (ac - ab).y * d_ac.x) /
+                                       (d_ab.x * d_ac.y - d_ab.y * d_ac.x);
+                            center = ab + d_ab * t;
+                            radius = DIST(center, a);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return radius;
+}
