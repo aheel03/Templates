@@ -1,0 +1,41 @@
+const ll N = 2e5 + 1;
+using Matrix = vector<vector<long long int>>;
+
+Matrix multiply(const Matrix &A, const Matrix &B, long long MOD = -1) {
+    // A = n x p
+    // B = p x m
+    int n = A.size();
+    int m = B[0].size();
+    int p = B.size();
+    Matrix C(n, vector<long long>(m, 0));
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            for (int k = 0; k < p; k++) {
+                C[i][j] += A[i][k] * B[k][j];
+                if (MOD != -1) C[i][j] %= MOD;
+            }
+        }
+    }
+    return C;
+}
+
+// Identity matrix of size n
+Matrix identity(ll n) {
+    Matrix I(n, vector<long long>(n, 0));
+    for (ll i = 0; i < n; i++) I[i][i] = 1;
+    return I;
+}
+
+// Fast exponentiation of matrix A^power with optional modulo
+Matrix matrix_power(Matrix A, ll power, ll MOD = -1) {
+    ll n = A.size();
+    Matrix result = identity(n);
+    while(power>0) {
+        if(power&1){
+            result = multiply(result, A, MOD);
+        }
+        A = multiply(A, A, MOD);
+        power/=2;
+    }
+    return result;
+}
