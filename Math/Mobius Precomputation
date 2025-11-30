@@ -1,0 +1,38 @@
+const ll N=3e6+5;
+
+vector<bool> sieve(N,true);
+vector<ll> primes;
+vector<ll> mu(N,1);
+
+void SIEVE(){
+    sieve[1]=false;
+    for(ll i=2;i*i<N;i++){
+        if(!sieve[i]) continue;
+        for(ll j=i*i;j<N;j+=i){
+            sieve[j]=false;
+        }
+    }
+}
+
+void PRIMES(){
+    loop(i,2,N){
+        if(sieve[i]){
+            primes.pb(i);
+        }
+    }
+}
+
+void Build_mu(){
+    mu[1]=1;
+    for(auto p:primes){
+        ll sq=p*p;
+        for(ll j=sq;j<N;j+=sq){
+            mu[j]=0;
+        }
+    }
+    for(auto p:primes){
+        for(ll j=p;j<N;j+=p){
+            mu[j]*=-1;
+        }
+    }
+}
