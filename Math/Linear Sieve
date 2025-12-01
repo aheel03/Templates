@@ -4,13 +4,13 @@ vector<ll> SPF(N,0ll);
 vector<ll> primes;
 
 void BuildSPF(){
-    for(int i=2;i<N;i++){
+    for(ll i=2;i<N;i++){
         if(SPF[i]==0) {
             SPF[i]=i;
             primes.push_back(i);
         }
     
-        for(int j=0;i*primes[j]<N;j++) {
+        for(ll j=0;i*primes[j]<N;j++) {
             SPF[i*primes[j]]=primes[j];
             if (primes[j]==SPF[i]) {
                 break;
@@ -19,4 +19,7 @@ void BuildSPF(){
     }
 }
 
-bool is_prime(ll n){return (SPF[n]==n);}
+bool is_prime(ll n){
+    if(n==0) return false;
+    return (SPF[n]==n);
+}
