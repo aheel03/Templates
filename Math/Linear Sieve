@@ -1,4 +1,4 @@
-const ll N=1e3+5;
+const ll N=1e6+5;
 
 vector<ll> SPF(N,0ll);
 vector<ll> primes;
