@@ -15,7 +15,7 @@ void dfs_plus(ll node, ll parent){
     position_in_euler[node]=idx; 
     euler[idx++]=node;
     subtree_size[node]=1;
-    heavy_child[node]=-1;
+    heavy_child[node]=-1; // leaf nodes remain -1
     height[node]=0;
     for(auto child:graph[node]){
         if(child==parent) continue;
