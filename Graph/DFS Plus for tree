@@ -1,0 +1,30 @@
+vector<ll> graph[N];
+vector<ll> euler(N,-1);
+vector<ll> subtree_size(N,-1);
+vector<ll> position_in_euler(N,-1);
+vector<ll> heavy_child(N,-1);
+vector<ll> depth(N,0);
+vector<ll> height(N,0);
+vector<ll> par(N,0);
+ll idx=0;
+
+void dfs_plus(ll node, ll parent){
+    par[node]=parent;
+    // for subtree range:
+    // for(int i=pos[node];i<pos[node]+subtree_size[node];i++) node=euler[i]
+    position_in_euler[node]=idx; 
+    euler[idx++]=node;
+    subtree_size[node]=1;
+    heavy_child[node]=-1;
+    height[node]=0;
+    for(auto child:graph[node]){
+        if(child==parent) continue;
+        depth[child]=depth[node]+1;
+        dfs_plus(child,node);
+        height[node]=max(height[node],height[child]+1);
+        subtree_size[node]+=subtree_size[child];
+        if(heavy_child[node]==-1 || subtree_size[heavy_child[node]]<subtree_size[child]){
+            heavy_child[node]=child;
+        }
+    }
+}
