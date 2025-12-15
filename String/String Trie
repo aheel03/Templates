@@ -1,0 +1,78 @@
+struct Trie{
+    static const ll SIG = 26;
+    struct Node{
+        Node *nxt[SIG];
+        ll pass; // how many strings pass through this node
+        ll end;  // how many strings end at this node
+        Node():pass(0),end(0){memset(nxt,0,sizeof(nxt));}
+    };
+    Node *root;
+    Trie() {root = new Node();}
+    ~Trie() {clear(root);}
+    static inline ll id(char c) { return c - 'a'; } //make sure letter is lowercase or witness segfault
+
+    void insert(const string &s){
+        Node* cur=root;
+        cur->pass++;
+        for(char c:s){
+            ll k=id(c);
+            if(!cur->nxt[k]) cur->nxt[k] = new Node();
+            cur=cur->nxt[k];
+            cur->pass++;
+        }
+        cur->end++;
+    }
+    bool find(const string &s) const{
+        const Node *cur = root;
+        for(char c:s){
+            ll k=id(c);
+            if(!cur->nxt[k])return false;
+            cur=cur->nxt[k];
+        }
+        return (cur->end)>0;
+    }
+    ll prefixmatchcount(const string &s) const{
+        const Node *cur = root;
+        for(char c:s){
+            ll k=id(c);
+            if(!cur->nxt[k]) return 0;
+            cur=cur->nxt[k];
+        }
+        return cur->pass;
+    }
+    // erase ONE occurrence of s; returns true if something was erased
+    bool erase(const string &s){
+        if (!find(s))return false;
+        Node* cur = root;
+        (cur->pass)--;
+        vector<pair<Node*, ll>> path; // (parent, edge_index)
+        path.reserve(s.size());
+        for(char c:s){
+            ll k=id(c);
+            path.push_back({cur, k});
+            cur=cur->nxt[k];
+            cur->pass--;
+        }
+        cur->end--;
+        // cleanup nodes from bottom if their pass becomes 0
+        for (ll i = (ll)path.size() - 1; i >= 0; i--){
+            Node* parent = path[i].first;
+            ll k = path[i].second;
+            Node* child = parent->nxt[k];
+            if (child->pass==0){
+                clear(child);
+                parent->nxt[k] = nullptr;
+            }else{
+                break; // higher nodes still needed
+            }
+        }
+        return true;
+    }
+
+private:
+    void clear(Node *cur){
+        if (!cur)return;
+        for (ll i = 0; i < SIG; i++)clear(cur->nxt[i]);
+        delete cur;
+    }
+};
