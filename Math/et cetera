@@ -1,0 +1,106 @@
+vector<ll> SPF(N,0ll);
+vector<ll> primes;
+vector<ll> mu(N,1);
+vector<ll> phi(N,0ll);
+
+void phi_1_to_n(int n) {
+    for(int i=0;i<=n;i++) phi[i]=i;
+    for(int i=2;i<=n;i++){
+        if(phi[i]==i){
+            for(int j=i;j<=n;j+=i) phi[j]-=phi[j]/i;
+        }
+    }
+}
+
+void BuildSPF(){
+    for(ll i=2;i<N;i++){
+        if(SPF[i]==0) {
+            SPF[i]=i;
+            primes.push_back(i);
+        }
+    
+        for(ll j=0;i*primes[j]<N;j++) {
+            SPF[i*primes[j]]=primes[j];
+            if (primes[j]==SPF[i]) {
+                break;
+            }
+        }
+    }
+}
+
+bool is_prime(ll n){
+    if(n==0) return false;
+    return (SPF[n]==n);
+}
+
+void divisor_generate(ll idx, ll current_divisor,
+                    vector<pair<ll,ll>>& factors,
+                    vector<ll>& result){
+    if(idx==factors.size()){
+        result.push_back(current_divisor);
+        return;
+    }
+
+    auto [p,exp]=factors[idx];
+    ll p_pow=1;
+    for(ll i=0;i<=exp;i++){
+        divisor_generate(idx+1,p_pow*current_divisor,factors,result);
+        p_pow*=p;
+    }
+}
+
+vector<ll> get_divisors(ll n){
+    if(n==1) return {1};
+
+    vector<ll> divisors;
+    vector<pair<ll,ll>> factors;
+    while(n>1){
+        ll p=SPF[n];
+        ll cnt=0;
+        while(n%p==0){
+            n/=p;
+            cnt++;
+        }
+        factors.push_back({p,cnt});
+    }
+    divisor_generate(0,1,factors,divisors);
+    sort(divisors.begin(),divisors.end());
+    return divisors;
+}
+
+void Build_mu(){
+    mu[1]=1;
+    for(auto p:primes){
+        ll sq=p*p;
+        for(ll j=sq;j<N;j+=sq){
+            mu[j]=0;
+        }
+    }
+    for(auto p:primes){
+        for(ll j=p;j<N;j+=p){
+            mu[j]*=-1;
+        }
+    }
+}
+
+ll f(ll n){
+    if(n<2) return 0;
+    return ((n*(n-1))/2)%M;
+}
+
+ll binpow(ll a, ll n, ll m){
+    if(n==0) return 1;
+    ll x=binpow(a,n/2,m);
+    if(n&1){
+        return (a*((x*x)%m))%m;
+    }else{
+        return (x*x)%m;
+    }
+}
+
+
+ll A_by_B_mod(ll a,ll b){
+    // ll g=__gcd(a,b);
+    // a/=g;b/=g;
+    return (a*(binpow(b,M-2,M)))%M;
+}
