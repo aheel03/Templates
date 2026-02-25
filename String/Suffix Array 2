@@ -1,0 +1,66 @@
+// P[i][j] holds the ranking of the j-th suffix
+// after comparing the first 2^i characters
+// of that suffix
+struct ranking{ll index;ll first;ll second;};
+ll P[20][1000000];
+bool comp(const ranking&a,const ranking&b) {
+    if (a.first==b.first) return a.second<b.second;
+    return a.first<b.first;}
+
+vector<ll> build_suffix_array(const string s) {
+    const ll n=s.length();
+    const ll lgn=ceil(log2(n));
+    vector<ll> sa(n);
+    vector<ranking> ranks(n);
+    ll i,j,step = 1;
+    for(j=0;j<n;j++) P[0][j]=s[j]-'a';
+    for(i=1;i<=lgn;i++,step++) {
+        for(j=0;j<n;j++){
+            ranks[j].index=j; ranks[j].first=P[i-1][j];
+            ranks[j].second=(j+(1<<(i-1))<n)?P[i-1][j+(ll)((1<<(i-1)))]:-1;
+        }
+        sort(ranks.begin(),ranks.end(),comp);
+        for(j=0;j<n;j++){
+            P[i][ranks[j].index]=(j>0&&ranks[j].first==ranks[j-1].first
+                &&ranks[j].second==ranks[j-1].second)?P[i][ranks[j-1].index]:j;
+        }
+    }step-=1;
+    for(i=0;i<n;i++) sa[P[step][i]]=i;
+    return sa;}
+
+vector<ll> build_lcp(const vector<ll>& sa,ll n) {
+    vector<ll> lcp(n,0);
+    ll step=ceil(log2(n));
+    for(ll k=1;k<n;k++) {
+        ll u=sa[k],v=sa[k-1];
+        for(ll x=step;x>=0;x--) {
+            if(u<n && v<n && P[x][u]==P[x][v]){
+                ll delta=(1ll<<x);
+                lcp[k]+=delta;
+                u+=delta;v+=delta;}}}return lcp;}
+
+ll find_pattern_first_occurence(const string&text,const string&pattern,const vector<ll>&sa){
+    ll lo=0ll,hi=(ll)sa.size()-1;
+    ll res=(ll)sa.size();
+    while(lo<=hi){
+        ll mid=lo+(hi-lo)/2;
+        if(text.compare(sa[mid],pattern.size(),pattern)>=0){
+            res=mid;hi=mid-1;
+        }else lo=mid+1;
+    }return res;}
+
+ll find_pattern_last_occurence(const string&text,const string&pattern,const vector<ll>&sa){
+    ll lo=0ll,hi=(ll)sa.size()-1;
+    ll res=-1;
+    while(lo<=hi){
+        ll mid=lo+(hi-lo)/2;
+        if(text.compare(sa[mid],pattern.size(),pattern)<=0){
+            res=mid;lo=mid+1;
+        }else hi=mid-1;
+    }return res;}
+
+bool pattern_exists(const string&text,const string&pattern,const vector<ll>&sa,ll idx=-1){
+    if(idx==-1) idx=find_pattern_first_occurence(text,pattern,sa);
+    if(idx==sa.size())return false;
+    if(text.compare(sa[idx],pattern.size(),pattern)==0) return true;
+    else return false;}
