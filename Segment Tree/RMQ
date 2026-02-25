@@ -1,0 +1,13 @@
+template <class T> struct RMQ{
+    vector<vector<T>> jmp;
+    RMQ(const vector<T>&V):jmp(1,V){
+        ll n=V.size();
+        for(ll pw=1,k=1;pw*2<=n;pw*=2,++k) {
+            jmp.emplace_back(n-pw*2+1);
+            for(ll j=0;j<(ll)jmp[k].size();++j) {
+                jmp[k][j]=min(jmp[k-1][j],jmp[k-1][j+pw]);
+            }}}
+    // Queries the minimum in the inclusive range [a, b]
+    T query(ll a, ll b){
+        int dep=31-__builtin_clz(b-a+1);
+        return min(jmp[dep][a],jmp[dep][b-(1<<dep)+1]);}};
