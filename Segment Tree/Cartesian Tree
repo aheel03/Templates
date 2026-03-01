@@ -5,8 +5,8 @@ ll buildCartesianTree(vll&arr,vll&L,vll&R) {
     stack<int> st;
     for (int i = 0; i < n; i++) {
         int last_popped = -1;
-        // Min-Heap logic
-        while (!st.empty() && arr[st.top()]>arr[i]) {
+        // Max-Heap logic
+        while (!st.empty() && arr[st.top()]<arr[i]) {
             last_popped = st.top();
             st.pop();
         }
@@ -20,4 +20,82 @@ ll buildCartesianTree(vll&arr,vll&L,vll&R) {
         st.pop();
     }
     return root;
+}
+//max depth reachable from a particular node
+ll MaxDepthCalc(ll node,vll&maxdepth,vll&L,vll&R){
+    if(node==-1) return 0;
+    return maxdepth[node]=1+max(MaxDepthCalc(L[node],maxdepth,L,R),
+                                MaxDepthCalc(R[node],maxdepth,L,R));
+}
+
+// Simple recursive function to print the tree (In-order)
+void printInOrder(int node, const vector<int>& arr, const vector<int>& L, const vector<int>& R) {
+    if (node == -1) return;
+    printInOrder(L[node], arr, L, R);
+    cout << arr[node] << " ";
+    printInOrder(R[node], arr, L, R);
+}
+
+const int LOG = 20;
+int up[N][LOG], depth[N];
+
+void dfs_lca(int u, int p, int d, const vector<int>& L, const vector<int>& R) {
+    depth[u] = d;
+    up[u][0] = p;
+    for (int i = 1; i < LOG; i++) 
+        up[u][i] = up[up[u][i-1]][i-1];
+    
+    if (L[u] != -1) dfs_lca(L[u], u, d + 1, L, R);
+    if (R[u] != -1) dfs_lca(R[u], u, d + 1, L, R);
+}
+//lca
+int get_lca(int u, int v) {
+    if (depth[u] < depth[v]) swap(u, v);
+    for (int i = LOG - 1; i >= 0; i--) {
+        if (depth[u] - (1 << i) >= depth[v]) u = up[u][i];
+    }
+    if (u == v) return u;
+    for (int i = LOG - 1; i >= 0; i--) {
+        if (up[u][i] != up[v][i]) {
+            u = up[u][i];
+            v = up[v][i];
+        }
+    }
+    return up[u][0];
+}
+
+//subtree size calc
+int sz[N];
+void computeSize(int u, const vector<int>& L, const vector<int>& R) {
+    if (u == -1) return;
+    sz[u] = 1;
+    if (L[u] != -1) {
+        computeSize(L[u], L, R);
+        sz[u] += sz[L[u]];
+    }
+    if (R[u] != -1) {
+        computeSize(R[u], L, R);
+        sz[u] += sz[R[u]];
+    }
+}
+//compute range where arr[i] is the maximum/minimum
+int range_l[N], range_r[N];
+void computeBounds(int u, int l, int r, const vector<int>& L, const vector<int>& R) {
+    if (u == -1) return;
+    range_l[u] = l;
+    range_r[u] = r;
+    if (L[u] != -1) computeBounds(L[u], l, u - 1, L, R);
+    if (R[u] != -1) computeBounds(R[u], u + 1, r, L, R);
+}
+// Usage: computeBounds(root, 0, n - 1, L, R);
+
+
+//tree flattening:
+int tin[N], tout[N], timer;
+void dfs_euler(int u, const vector<int>& L, const vector<int>& R) {
+    if (u == -1) return;
+    tin[u] = ++timer;
+    dfs_euler(L[u], L, R);
+    dfs_euler(R[u], L, R);
+    tout[u] = timer;
 }
