@@ -1,0 +1,54 @@
+template<class T> struct segtree{
+    vector<T> t;
+    ll _n=1;
+    T comb(T a,T b){return a+b;} //EDIT THIS!
+    T unt=T(0);                  //EDIT THIS!
+    //bld = true for Point Update Range Query
+    //bld = false for Range Update Point Query
+    segtree(vector<T>&v,bool bld=true) {
+        ll n=v.size();
+        while(_n<n) _n<<=1ll;
+        t.resize(2*_n,unt);
+        for(ll i=0;i<n;i++) t[_n+i]=v[i];
+        if (bld){
+            for(ll i=_n-1;i>0;i--)
+                t[i]=comb(t[i<<1ll],t[i<<1ll|1ll]);
+        }
+    }
+    // point update range query
+    void modify(ll p,T val){ 
+        // set value at position p (0-indexed)
+        for(t[p+=_n]=val;p>1;p>>=1ll)
+            t[p>>1ll]=comb(t[p&~1ll],t[p|1ll]);
+    }
+    T query(ll l,ll r){
+        // query on interval [l,r] 0-indexed
+        r++;
+        T resl=unt,resr=unt;
+        for(l+=_n,r+=_n;l<r;l>>=1ll,r>>=1ll){
+            if(l&1ll) resl=comb(resl,t[l++]);
+            if(r&1ll) resr=comb(t[--r],resr);
+        }
+        return comb(resl,resr);
+    }
+    // range update point query
+    void modify(ll l,ll r,T val){
+        r++;
+        for (l+=_n,r+=_n;l<r;l>>=1ll,r>>=1ll){
+            if(l&1ll){t[l]=comb(t[l],val);l++;}
+            if(r&1ll){--r;t[r]=comb(t[r],val);}
+        }
+    }
+    T query(ll p){
+        T res=unt;
+        for(p+=_n;p>0;p>>=1ll) res=comb(t[p],res);
+        return res;
+    }
+    void push(){// push all range updates to points
+        for(ll i=1;i<_n;i++){
+            t[i<<1ll]=comb(t[i<<1ll],t[i]);
+            t[i<<1ll|1ll]=comb(t[i<<1ll|1ll],t[i]);
+            t[i]=unt;
+        }
+    }
+};
