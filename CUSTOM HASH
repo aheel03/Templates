@@ -10,4 +10,6 @@ struct custom_hash {
         return splitmix64(x + FIXED_RANDOM);
     }
 };
-//use : map<ll,ll,custom_hash>
+// use : map<ll,ll,custom_hash>
+// It also works for unordered_set!
+// unordered_set<ll, custom_hash> s;
