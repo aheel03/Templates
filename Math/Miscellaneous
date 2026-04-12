@@ -1,0 +1,14 @@
+pair<ll,ll> largest_2_power_smaller_than_or_eq(ll n){
+    ll num=1ll,power=0ll;
+    while(num<=n){num*=2;power++;}
+    num/=2;power--;
+    return make_pair(num,power);}
+
+pair<ll,ll> smallest_2_power_larger_than_or_eq(ll n){
+    ll num=1ll,power=0ll;
+    while(num<n){num*=2;power++;}
+    return make_pair(num,power);}
+
+ll A_by_B_mod(ll a,ll b){
+    return (a*(binpow(b,M-2,M)))%M;
+}
