@@ -1,0 +1,25 @@
+ll number_of_set_bits(ll n){
+    return __builtin_popcountll(n);}
+
+inline ll msb_idx(ll n) {
+    if(n==0) return -1;
+    return 63-__builtin_clzll(n); 
+}
+
+inline ll lsb_idx(ll n) {
+    if(n==0) return -1;
+    return __builtin_ctzll(n);
+}
+
+inline bool is_power_of_two(ll n) {
+    return (n>0)&&((n&(n-1))==0);
+}
+
+vector<ll> decimal_to_binary(ll n){
+    vll ans;ll idx=0;
+    while(n>0){
+        ans.pb(n%2);n>>=1ll;}
+    while(ans.size()<32) ans.pb(0);
+    reverse(ans.begin(),ans.end());
+    return ans;
+}
