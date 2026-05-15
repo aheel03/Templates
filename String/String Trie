@@ -1,3 +1,20 @@
+/**
+ * TRIE (PREFIX TREE) TEMPLATE
+ * 
+ * USE CASE: 
+ *  - Fast string insertion, search, and prefix counting.
+ *  - O(L) complexity for all operations (L = string length).
+ * 
+ * QUICK GUIDE:
+ *  - insert("apple"): Adds "apple". Increments .pass for 'a','p','p','l','e' and .end for 'e'.
+ *  - find("apple"): Returns true ONLY if "apple" was explicitly inserted.
+ *  - prefixmatchcount("app"): Returns count of ALL strings starting with "app" (e.g., apple, apply).
+ *  - erase("apple"): Removes ONE instance. Cleanly deletes unused nodes.
+ * 
+ * CAUTION:
+ *  - id(char c) assumes 'a'-'z'. Inputting 'A' or '1' will SEGFAULT.
+ *  - Memory: Each node uses 26 * 8 bytes (pointers). Space grows fast.
+ **/
 struct Trie{
     static const ll SIG = 26;
     struct Node{
