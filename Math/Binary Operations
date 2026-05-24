@@ -19,6 +19,8 @@ int lowest_Set_Bit(int x) {
    return (x & (-x));
 }
 
+// count trailing zeroes: __builtin_ctz(x) and For long long : __builtin_ctzll(x)
+
 vector<ll> decimal_to_binary(ll n){
     vll ans;ll idx=0;
     while(n>0){
