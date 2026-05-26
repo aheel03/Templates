@@ -1,0 +1,6 @@
+vector<ll> dp((1<<n),0ll);
+for(int mask=1;mask<(1<<n);mask++){
+    for(int sub=mask;sub>0;sub=((sub-1)&mask)){
+        dp[mask]=max(dp[mask],dp[mask^sub]+val[sub]);
+    }
+}
