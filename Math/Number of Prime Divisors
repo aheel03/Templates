@@ -1,0 +1,14 @@
+vector<ll> num_of_p_div(N,0ll);
+vector<ll> dp(N,0ll); 
+// dp(n) = number of coprime pairs i,j 
+// s.t. i*j <= n 
+void ComputeNumOfPrimeDiv(){
+    for(int i=2;i<N;i++){
+        if(num_of_p_div[i]!=0) continue;
+        num_of_p_div[i]=1;
+        for(int j=i+i;j<N;j+=i){
+            num_of_p_div[j]++;}}}
+
+void precom(){
+    loop(i,1,N){
+        dp[i]=dp[i-1]+(1ll<<num_of_p_div[i]);}}
