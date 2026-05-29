@@ -1,0 +1,6 @@
+https://www.codechef.com/problems/LCMXE
+// Counting LCM (Easy): 
+// Given Z, find the number of pairs (X, Y) such that 1 <= X <= Z, 
+// 1 <= Y <= Z, and lcm(X, Y) > Z. Input: T test cases, each with 
+// an integer Z (1 <= T <= 10^6, 1 <= Z <= 10^6, sum of Z <= 10^6). 
+// Output: The number of valid pairs (X, Y) for each test case.
