@@ -9,6 +9,13 @@ struct custom_hash {
         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
         return splitmix64(x + FIXED_RANDOM);
     }
+    //extra
+    size_t operator()(pair<long long, long long> X) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        uint64_t h1 = splitmix64(X.first + FIXED_RANDOM);
+        uint64_t h2 = splitmix64(X.second + FIXED_RANDOM);
+        return h1 ^ (h2 + 0x9e3779b97f4a7c15 + (h1 << 6) + (h1 >> 2));
+    }
 };
 // use : map<ll,ll,custom_hash>
 // It also works for unordered_set!
