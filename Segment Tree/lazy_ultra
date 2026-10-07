@@ -1,0 +1,124 @@
+struct ST {
+    // a has to be 1-indexed, so are the oper.
+    // vector<ll> a(n+1,0ll);
+    // ST st; st.init(a);
+    int n;
+    vector<ll> t,lz,setv,pre;
+    vector<char> tag;
+    // tag[p] = 1 -> pending range assignment
+    // tag[p] = 2 -> pending rollback to original
+    
+    #define lc ((p<<1))
+    #define rc ((p<<1)|1)
+
+    void init(vector<ll>& a){
+        if(a.size() <= 1) return;
+        n=a.size()-1;
+        t.resize(4*n+5);
+        lz.assign(4*n+5,0);//no initial pending range addition
+        setv.resize(4*n+5);//no initial pending range assignment
+        tag.assign(4*n+5,0);//nothing pending
+        pre.resize(n+1);
+
+        for(int i=1;i<=n;i++) pre[i]=pre[i-1]+a[i];
+        build(1,1,n,a);
+    }
+
+    void build(int p,int l,int r,vector<ll>& a){
+        if(l==r){ t[p]=a[l]; return; }
+        int m=(l+r)>>1;
+        build(lc,l,m,a);
+        build(rc,m+1,r,a);
+        t[p]=t[lc]+t[rc];
+    }
+
+    void Set(int p,int l,int r,ll x){
+        t[p]=x*(r-l+1);
+        setv[p]=x;
+        tag[p]=1;
+        lz[p]=0;
+    }
+
+    void Add(int p,int l,int r,ll x){
+        t[p]+=x*(r-l+1);
+        if(tag[p]==1) setv[p]+=x;//range assignment pending
+        else lz[p]+=x;
+    }
+
+    void Roll(int p,int l,int r){
+        t[p]=pre[r]-pre[l-1];
+        tag[p]=2;
+        lz[p]=0;
+    }
+
+    void push(int p,int l,int r){
+        if(l==r){ tag[p]=0; lz[p]=0; return; }
+
+        int m=(l+r)>>1;
+
+        if(tag[p]==1){
+            Set(lc,l,m,setv[p]);
+            Set(rc,m+1,r,setv[p]);
+        }
+        else if(tag[p]==2){
+            Roll(lc,l,m);
+            Roll(rc,m+1,r);
+        }
+
+        if(lz[p]){
+            Add(lc,l,m,lz[p]);
+            Add(rc,m+1,r,lz[p]);
+        }
+
+        tag[p]=0;
+        lz[p]=0;
+    }
+
+    void set(int p,int l,int r,int ql,int qr,ll x){
+        if(qr<l||r<ql) return;
+        if(ql<=l&&r<=qr){ Set(p,l,r,x); return; }
+
+        push(p,l,r);
+        int m=(l+r)>>1;
+        set(lc,l,m,ql,qr,x);
+        set(rc,m+1,r,ql,qr,x);
+        t[p]=t[lc]+t[rc];
+    }
+
+    void add(int p,int l,int r,int ql,int qr,ll x){
+        if(qr<l||r<ql) return;
+        if(ql<=l&&r<=qr){ Add(p,l,r,x); return; }
+
+        push(p,l,r);
+        int m=(l+r)>>1;
+        add(lc,l,m,ql,qr,x);
+        add(rc,m+1,r,ql,qr,x);
+        t[p]=t[lc]+t[rc];
+    }
+
+    void roll(int p,int l,int r,int ql,int qr){
+        if(qr<l||r<ql) return;
+        if(ql<=l&&r<=qr){ Roll(p,l,r); return; }
+
+        push(p,l,r);
+        int m=(l+r)>>1;
+        roll(lc,l,m,ql,qr);
+        roll(rc,m+1,r,ql,qr);
+        t[p]=t[lc]+t[rc];
+    }
+
+    ll query(int p,int l,int r,int ql,int qr){
+        if(qr<l||r<ql) return 0;//null
+        if(ql<=l&&r<=qr) return t[p];
+
+        push(p,l,r);
+        int m=(l+r)>>1;
+        return query(lc,l,m,ql,qr)
+             + query(rc,m+1,r,ql,qr);
+    }
+
+    void set(int l,int r,ll x){ set(1,1,n,l,r,x); }
+    void add(int l,int r,ll x){ add(1,1,n,l,r,x); }
+    void roll(int l,int r){ roll(1,1,n,l,r); }
+    ll query(int l,int r){ return query(1,1,n,l,r); }
+};
