@@ -1,22 +1,55 @@
 struct custom_hash {
     static uint64_t splitmix64(uint64_t x) {
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        x += 0x9e3779b97f4a7c15ULL;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9ULL;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111ebULL;
         return x ^ (x >> 31);
     }
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-    //extra
-    size_t operator()(pair<long long, long long> X) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        uint64_t h1 = splitmix64(X.first + FIXED_RANDOM);
-        uint64_t h2 = splitmix64(X.second + FIXED_RANDOM);
-        return h1 ^ (h2 + 0x9e3779b97f4a7c15 + (h1 << 6) + (h1 >> 2));
+
+    size_t operator()(const pair<long long, long long>& p) const {
+        static const uint64_t seed =
+            chrono::steady_clock::now().time_since_epoch().count();
+
+        uint64_t h = splitmix64(uint64_t(p.first) + seed);
+        return splitmix64(h ^ splitmix64(uint64_t(p.second) + seed));
     }
 };
 // use : map<ll,ll,custom_hash>
 // It also works for unordered_set!
 // unordered_set<ll, custom_hash> s;
+
+
+
+//CUSTOM HASH FOR i128   ---------
+using i128 = __int128_t;
+using u128 = __uint128_t;
+// i128 xx=read128();
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t X) {
+        X += 0x9e3779b97f4a7c15ULL;
+        X = (X ^ (X >> 30)) * 0xbf58476d1ce4e5b9ULL;
+        X = (X ^ (X >> 27)) * 0x94d049bb133111ebULL;
+        return X ^ (X >> 31);
+    }
+
+    size_t operator()(const pair<i128, i128>& p) const {
+        static const uint64_t seed =
+            chrono::steady_clock::now().time_since_epoch().count();
+
+        uint64_t h = seed;
+
+        auto add = [&](uint64_t X) {
+            h = splitmix64(h ^ splitmix64(X));
+        };
+
+        u128 a = static_cast<u128>(p.first);
+        u128 b = static_cast<u128>(p.second);
+
+        add(static_cast<uint64_t>(a));
+        add(static_cast<uint64_t>(a >> 64));
+        add(static_cast<uint64_t>(b));
+        add(static_cast<uint64_t>(b >> 64));
+
+        return static_cast<size_t>(h);
+    }
+};
