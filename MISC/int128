@@ -1,0 +1,41 @@
+using i128 = __int128_t;
+using u128 = __uint128_t;
+// i128 xx=read128();
+i128 read128() {
+    string s;
+    cin >> s;
+    int i = 0;
+    bool neg = false;
+
+    if (s[0] == '-' || s[0] == '+') {
+        neg = (s[0] == '-');
+        i++;
+    }
+
+    // Accumulate negatively to support the minimum signed value.
+    i128 X = 0;
+    for (; i < (int)s.size(); i++)
+        X = X * 10 - (s[i] - '0');
+
+    return neg ? X : -X;
+}
+
+void print128(i128 X) {
+    if (X == 0) {
+        cout << '0';
+        return;
+    }
+
+    // Avoid overflow when x is the minimum signed value.
+    u128 n = X < 0 ? u128(0) - u128(X) : u128(X);
+    string s;
+
+    while (n > 0) {
+        s += char('0' + n % 10);
+        n /= 10;
+    }
+
+    if (X < 0) cout << '-';
+    reverse(s.begin(), s.end());
+    cout << s;
+}
